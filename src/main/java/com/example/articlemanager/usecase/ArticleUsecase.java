@@ -63,7 +63,7 @@ public class ArticleUsecase {
         return genericResponse;
     }
 
-    public GenericResponse getAllArticle(){
+    public GenericResponse getAllArticle(Integer page, Integer size){
         GenericResponse genericResponse = new GenericResponse();
         try{
             List<Article> articles = articleRepository.findAll();
@@ -71,7 +71,15 @@ public class ArticleUsecase {
                 genericResponse.setFailed(HttpStatus.NOT_FOUND, "Article not found");
                 return genericResponse;
             }
-
+            if(page!=0 && size!=0){
+                page = page - 1;
+                int start = page * size;
+                int end = start + size;
+                if(end > articles.size()){
+                    end = articles.size();
+                }
+                articles = articles.subList(start, end);
+            }            
             genericResponse.setSuccess(articles);
         }catch(Exception e){
             genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());  

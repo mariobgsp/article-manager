@@ -22,8 +22,21 @@ public class ArticleController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllArticles() {
-        GenericResponse genericResponse = articleUsecase.getAllArticle();
+    public ResponseEntity<?> getAllArticles(
+                @RequestParam(name = "page", required = false) Integer page, 
+                @RequestParam(name="size", required = false) Integer size
+                ) {
+
+        if(page == null && size == null){
+            page = 0;
+            size = 0;
+        }else if (page == null && size != null) {
+            page = 1;
+        }else if (page != null && size == null) {
+            size = 10;
+        }
+
+        GenericResponse genericResponse = articleUsecase.getAllArticle(page, size);
         return ResponseEntity.status(genericResponse.getHttpStatusCode()).body(genericResponse);
     }
 
