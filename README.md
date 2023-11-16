@@ -155,7 +155,7 @@ HTTP 401 UNAUTHORIZED
     "error": "Unauthorized"
 }
 ```
-HTTP 409 Duplicate
+HTTP 406 Conflict
 ```
 {
     "message": "Request Failed",
