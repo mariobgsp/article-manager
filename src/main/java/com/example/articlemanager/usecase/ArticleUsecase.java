@@ -2,6 +2,7 @@ package com.example.articlemanager.usecase;
 
 import java.util.List;
 
+import com.example.articlemanager.model.rqrs.AddArticleRs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -32,10 +33,20 @@ public class ArticleUsecase {
                     return genericResponse;
                 }
             }
-
+            // insert with query
             articleInsertRepository.insertWithQuery(articleRq);
 
-            genericResponse.setSuccessMsg("Article Inserted Successfully");
+            // get all article
+            articles = articleRepository.findAll();
+
+            // construct response
+            AddArticleRs addArticleRs = new AddArticleRs();
+            addArticleRs.setAuthor(articleRq.getAuthor());
+            addArticleRs.setBody(articleRq.getBody());
+            addArticleRs.setTitle(articleRq.getTitle());
+            addArticleRs.setId(Math.toIntExact(articles.get(articles.size() - 1).getId()));
+
+            genericResponse.setSuccess(addArticleRs);
         }catch(Exception e){
             genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 
@@ -82,8 +93,7 @@ public class ArticleUsecase {
             }            
             genericResponse.setSuccess(articles);
         }catch(Exception e){
-            genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());  
-
+            genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return genericResponse;
@@ -92,13 +102,12 @@ public class ArticleUsecase {
     public GenericResponse getArticleById(Long id){
         GenericResponse genericResponse = new GenericResponse();
         try{
-            Article article = articleRepository.findById(id).get();
-            if(article == null){
+            List<Article> articles = articleRepository.findById(id).stream().toList();
+            if(articles.isEmpty()){
                 genericResponse.setFailed(HttpStatus.NOT_FOUND, "Article not found");
                 return genericResponse;
             }
-
-            genericResponse.setSuccess(article);
+            genericResponse.setSuccess(articles);
         }catch(Exception e){
             genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());   
         }
@@ -109,12 +118,11 @@ public class ArticleUsecase {
     public GenericResponse deleteArticleById(Long id){
         GenericResponse genericResponse = new GenericResponse();
         try{
-            Article article = articleRepository.findById(id).get();
-            if(article == null){
-                genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, "Article not found"); 
+            List<Article> articles = articleRepository.findById(id).stream().toList();
+            if(articles.isEmpty()){
+                genericResponse.setFailed(HttpStatus.NOT_FOUND, "Article not found");
                 return genericResponse;
             }
-
             articleRepository.deleteById(id);
 
             genericResponse.setSuccessMsg("Article Deleted Successfully");

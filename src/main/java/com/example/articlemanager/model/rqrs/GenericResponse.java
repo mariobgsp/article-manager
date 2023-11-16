@@ -1,5 +1,6 @@
 package com.example.articlemanager.model.rqrs;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenericResponse {
 
     @JsonIgnore

@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  article-manager:
+    container_name: article-manager
+    build:
+      context: ../article-manager
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "8080:8080"
