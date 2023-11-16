@@ -29,7 +29,7 @@ public class ArticleUsecase {
             for (Article article : articles) {
                 if (article.getTitle().equals(articleRq.getTitle())) {
                 
-                    genericResponse.setFailed(HttpStatus.BAD_REQUEST, "Title already exist");
+                    genericResponse.setFailed(HttpStatus.CONFLICT, "Title already exist");
                     return genericResponse;
                 }
             }
