@@ -1,0 +1,53 @@
+title article-manager
+
+actor "user" as u
+
+participant "article-manager" as AM
+participant "article-database" as db
+
+u->AM:/articles/add
+activate AM
+
+AM->AM:check auth
+AM->db:get all article
+AM->AM:check duplicate
+AM->db:insert
+u<--AM:response
+deactivate AM
+u->AM:/articles/all
+activate AM
+AM->AM:check auth
+
+AM<-db:get all article
+AM->AM:check page and size
+u<--AM:response
+deactivate AM
+u->AM:/articles//{id}
+activate AM
+AM->AM:check auth
+
+AM<-db:get article by id
+u<--AM:response
+deactivate AM
+u->AM:/articles/update/{id}
+activate AM
+AM->AM:check auth
+
+AM<-db:get article by id
+alt if exist
+
+AM->db:update
+end
+u<--AM:response
+deactivate AM
+u->AM:/articles/delete/{id}
+activate AM
+AM->AM:check auth
+
+AM<-db:get article by id
+alt if exist
+AM->db:delete
+
+end
+u<--AM:response
+deactivate AM
