@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/articles")
 public class ArticleController {
@@ -124,7 +126,9 @@ public class ArticleController {
             }
         }
 
-        GenericResponse genericResponse = articleUsecase.updateArticle(article, id);
+        CompletableFuture.runAsync(()->articleUsecase.updateArticle(article, id));
+        GenericResponse genericResponse = new GenericResponse();
+        genericResponse.setSuccessMsg("Article Updated Successfully");
         return ResponseEntity.status(genericResponse.getHttpStatusCode()).body(genericResponse);
     }
 
@@ -148,7 +152,10 @@ public class ArticleController {
             }
         }
 
-        GenericResponse genericResponse = articleUsecase.deleteArticleById(id);
+
+        CompletableFuture.runAsync(()->articleUsecase.deleteArticleById(id));
+        GenericResponse genericResponse = new GenericResponse();
+        genericResponse.setSuccessMsg("Article Deleted Successfully");
         return ResponseEntity.status(genericResponse.getHttpStatusCode()).body(genericResponse);
     }
 }

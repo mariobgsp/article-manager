@@ -3,6 +3,7 @@ package com.example.articlemanager.usecase;
 import java.util.List;
 
 import com.example.articlemanager.model.rqrs.AddArticleRs;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,7 @@ import com.example.articlemanager.repository.ArticleInsertRepository;
 import com.example.articlemanager.repository.ArticleRepository;
 
 @Repository
+@Slf4j
 public class ArticleUsecase {
 
     @Autowired
@@ -67,8 +69,10 @@ public class ArticleUsecase {
             articleRepository.save(newArticle);
 
             genericResponse.setSuccessMsg("Article Updated Successfully");
+            log.info("{}", genericResponse.getMessage());
         }catch(Exception e){
             genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            log.info("{}", genericResponse.getError());
         }
 
         return genericResponse;
@@ -115,22 +119,24 @@ public class ArticleUsecase {
         return genericResponse;
     }
 
-    public GenericResponse deleteArticleById(Long id){
+    public void deleteArticleById(Long id){
         GenericResponse genericResponse = new GenericResponse();
         try{
             List<Article> articles = articleRepository.findById(id).stream().toList();
             if(articles.isEmpty()){
                 genericResponse.setFailed(HttpStatus.NOT_FOUND, "Article not found");
-                return genericResponse;
+
             }
             articleRepository.deleteById(id);
 
             genericResponse.setSuccessMsg("Article Deleted Successfully");
+            log.info("{}", genericResponse.getMessage());
         }catch(Exception e){
-            genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());  
+            genericResponse.setFailed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            log.info("{}", genericResponse.getError());
         }
 
-        return genericResponse;
+
     }
 
     
